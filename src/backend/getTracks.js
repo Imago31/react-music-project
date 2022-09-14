@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://84.201.139.95:8000'
+// const API_URL = 'http://84.201.139.95:8000'
+const API_URL = 'http://178.154.207.247:8000'
 
 export async function getTracksAll() {
     // По этому запросу выдается только первая страница из 10 элементов. Запрос на следующую страницу хранится в data.next
