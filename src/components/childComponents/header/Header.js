@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import  './header.css'
 
 export default function Header(props) {
     const [userLogin, setUserLogin] = useState(localStorage.getItem('user'))
     const [tracks, setTracks] = useState(props.tracks)
+    const navigate = useNavigate();
 
     const handleSearchChange = (event) => {
         // console.log(`> Search: ${event.target.value}`)
@@ -298,6 +300,11 @@ export default function Header(props) {
     const AddedCounterYear = () => <div className={filterCountClassYear}>{filterCountYear}</div>
     const AddedCounterGenre = () => <div className={filterCountClassGenre}>{filterCountGenre}</div>
 
+        function handerExit() {
+            navigate('/', {replace: true})
+            // localStorage.removeItem ('user')
+        } 
+
     return (
       <div className="header">
       <img className="search_icon"src="img/icon/search.svg" alt=""/>
@@ -306,6 +313,7 @@ export default function Header(props) {
           <div className="avatar_block">
               <p className="user_name">{userLogin}</p>
               <div className="avatar"></div>
+              <button className='user_button' onClick={handerExit}>Выйти</button>
           </div>
       </div>
       <p className="header_title">{props.title}</p>
