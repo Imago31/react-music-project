@@ -11,7 +11,7 @@ import VolumeNoneIcon from './icons/volume_none.png'
 import VolumeLowIcon from './icons/volume_low.png'
 import VolumeMediumIcon from './icons/volume_mid.png'
 import VolumeHighIcon from './icons/volume_high.png'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 function secondsToString(timeSec) {
     const mins = Math.floor(timeSec / 60).toString()
@@ -134,6 +134,13 @@ export default function Player(props) {
         currentAudio.play()
         currentAudio.addEventListener('timeupdate', handleTimeUpdate)
     }, [props.currentTrack, props.currentTrackIdx])
+
+    useLayoutEffect(() => {
+        return () => {
+            currentAudio.setAttribute('src', '')
+            currentAudio.load()
+        }
+    }, [])
 
 
     return (
