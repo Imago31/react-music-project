@@ -95,6 +95,7 @@ export default function Player(props) {
 
     const playPrevTrack = () => {
         if (currTrackHasAdjacent.left) props.setCurrentTrackByIdx(currentTrackIdx - 1)
+        else if (isLoopEnabled) props.setCurrentTrackByIdx(props.tracksLength - 1)
     }
 
     const playNextTrack = () => {

@@ -190,6 +190,7 @@ export default function MainPage() {
                     setCurrentTrackByIdx={setCurrentTrackByIdx}
                     isShuffleEnabled={isShuffleEnabled}
                     setIsShuffleEnabled={setIsShuffleEnabled}
+                    tracksLength={tracksConverted ? tracksConverted.length : 0}
                 />
                 :
                 null
