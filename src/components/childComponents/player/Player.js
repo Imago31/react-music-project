@@ -11,7 +11,7 @@ import VolumeNoneIcon from './icons/volume_none.png'
 import VolumeLowIcon from './icons/volume_low.png'
 import VolumeMediumIcon from './icons/volume_mid.png'
 import VolumeHighIcon from './icons/volume_high.png'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 function secondsToString(timeSec) {
     const mins = Math.floor(timeSec / 60).toString()
@@ -26,7 +26,7 @@ export default function Player(props) {
     // Playing States
     const [isPlaying, setIsPlaying] = useState(false)
     const [isLoopEnabled, setIsLoopEnabled] = useState(false)
-    const [isShuffleEnabled, setIsShuffleEnabled] = useState(false)
+    const [isShuffleEnabled, setIsShuffleEnabled] = useState(props.isShuffleEnabled)
     // Current Audio
     const [currentAudio, setCurrentAudio] = useState(new Audio(props.currentTrack.path))
     // Current Track States
@@ -38,6 +38,15 @@ export default function Player(props) {
     const [volume, setVolume] = useState(DEFAULT_VOLUME)
     const [isMuted, setIsMuted] = useState(false)
     const volumeSliderRef = useRef(null)
+
+    // Loop & Shuffle
+    useEffect(() => {
+        setIsLoopEnabled(props.isLoopEnabled)
+    }, [props.isLoopEnabled])
+
+    useEffect(() => {
+        setIsShuffleEnabled(props.isShuffleEnabled)
+    }, [props.isShuffleEnabled])
 
     // Volume
     const getVolumeIcon = () => {
@@ -85,16 +94,14 @@ export default function Player(props) {
     }
 
     const playPrevTrack = () => {
-        if (currTrackHasAdjacent.left) {
-            props.setCurrentTrackByIdx(currentTrackIdx - 1)
-        }
+        if (currTrackHasAdjacent.left) props.setCurrentTrackByIdx(currentTrackIdx - 1)
+        else if (isLoopEnabled) props.setCurrentTrackByIdx(props.tracksLength - 1)
     }
 
     const playNextTrack = () => {
         console.log('> playNextTrack')
-        if (currTrackHasAdjacent.right) {
-            props.setCurrentTrackByIdx(currentTrackIdx + 1)
-        }
+        if (currTrackHasAdjacent.right) props.setCurrentTrackByIdx(currentTrackIdx + 1)
+        else if (isLoopEnabled) props.setCurrentTrackByIdx(0)
     }
 
     const handleTimeUpdate = () => {
@@ -127,7 +134,14 @@ export default function Player(props) {
         currentAudio.load()
         currentAudio.play()
         currentAudio.addEventListener('timeupdate', handleTimeUpdate)
-    }, [props.currentTrack])
+    }, [props.currentTrack, props.currentTrackIdx])
+
+    useLayoutEffect(() => {
+        return () => {
+            currentAudio.setAttribute('src', '')
+            currentAudio.load()
+        }
+    }, [])
 
 
     return (
@@ -159,8 +173,18 @@ export default function Player(props) {
                 <span className="song__timeline-text">{secondsToString(Math.floor(currTrackFactLength))} / {secondsToString(currentTrack.duration_in_seconds)}</span>
             </div>
             <div className="player-order__control">
-                <img className="player__icon icon_padding" src={isLoopEnabled ? LoopEnabledIcon : LoopDisabledIcon} alt="Previous Song"></img>
-                <img className="player__icon icon_padding" src={isShuffleEnabled ? ShuffleEnabledIcon : ShuffleDisabledIcon} alt="Previous Song"></img>
+                <img
+                    className="player__icon icon_padding"
+                    src={isLoopEnabled ? LoopEnabledIcon : LoopDisabledIcon}
+                    alt="Previous Song"
+                    onClick={() => setIsLoopEnabled(!isLoopEnabled)}
+                ></img>
+                <img
+                    className="player__icon icon_padding"
+                    src={isShuffleEnabled ? ShuffleEnabledIcon : ShuffleDisabledIcon}
+                    alt="Previous Song"
+                    onClick={() => props.setIsShuffleEnabled(!isShuffleEnabled)}
+                ></img>
                 <img
                     className="player__icon volume"
                     src={getVolumeIcon()}

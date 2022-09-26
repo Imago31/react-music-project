@@ -89,6 +89,8 @@ const TRACKS_TEST = [
 
 export default function MainPage() {
     const [tracks, setTracks] = useState(null)
+    const [tracksConverted, setTracksConverted] = useState(null)
+    const [isShuffleEnabled, setIsShuffleEnabled] = useState(false)
     const [currPlaylistTitle, setCurrentPlaylistTitle] = useState('Tracks')
     const [currentTrack, setCurrentTrack] = useState(null)
     const [currentTrackIdx, setCurrentTrackIdx] = useState(null)
@@ -106,6 +108,9 @@ export default function MainPage() {
     }, [])
 
 
+    useEffect(() => {
+        setTracksConverted(tracks)
+    }, [tracks])
 
     // Для красивого эффекта - показываем, что загружаем новые треки
     const clearTracks = () => {
@@ -113,17 +118,17 @@ export default function MainPage() {
     }
 
     const setCurrentTrackById = (trackId) => {
-        const currentTrack = tracks.filter((track) => {
+        const currentTrack = tracksConverted.filter((track) => {
             return track.id === trackId
         })[0]
         setCurrentTrack(currentTrack)
-        setCurrentTrackIdx(tracks.findIndex(x => x.id === trackId))
+        setCurrentTrackIdx(tracksConverted.findIndex(x => x.id === trackId))
         setHasAdjacent(trackId)
     }
 
     const setCurrentTrackByIdx = (trackIdx) => {
         // console.log(`> Setting new track, idx=${trackIdx}`)
-        const currentTrack = tracks[trackIdx]
+        const currentTrack = tracksConverted[trackIdx]
         // console.log(`> Set current track to: ${tracks[trackIdx].id}`)
         setCurrentTrack(currentTrack)
         setCurrentTrackIdx(trackIdx)
@@ -131,13 +136,35 @@ export default function MainPage() {
     }
 
     const setHasAdjacent = (trackId) => {
-        const currTrackIdx = tracks.findIndex(x => x.id === trackId)
+        const currTrackIdx = tracksConverted.findIndex(x => x.id === trackId)
         setCurrentTrackIdx(currTrackIdx)
         setCurrTrackHasAdjacent({
             left: currTrackIdx === 0 ? false : true,
-            right: currTrackIdx === tracks.length - 1 ? false : true
+            right: currTrackIdx === tracksConverted.length - 1 ? false : true
         })
     }
+
+    // Shuffle Tracks
+    const shuffleTracks = (tracksArray) => {
+        if (isShuffleEnabled) return [currentTrack].concat(
+                                        tracksArray
+                                        .filter((track) => { return track.id !== currentTrack.id })
+                                        .map(value => ({ value, sort: Math.random() }))
+                                        .sort((a, b) => a.sort - b.sort)
+                                        .map(({ value }) => value)
+                                    )
+         else return tracksArray
+    }
+
+    useEffect(() => {
+        if (isShuffleEnabled) setTracksConverted(shuffleTracks(tracks))
+        else setTracksConverted(tracks)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isShuffleEnabled])
+
+    useEffect(() => {
+        if (currentTrack) setCurrentTrackById(currentTrack.id)
+    }, [tracksConverted])
 
     return (
         <div>
@@ -161,6 +188,9 @@ export default function MainPage() {
                     currentTrackIdx={currentTrackIdx}
                     currTrackHasAdjacent={currTrackHasAdjacent}
                     setCurrentTrackByIdx={setCurrentTrackByIdx}
+                    isShuffleEnabled={isShuffleEnabled}
+                    setIsShuffleEnabled={setIsShuffleEnabled}
+                    tracksLength={tracksConverted ? tracksConverted.length : 0}
                 />
                 :
                 null
@@ -172,27 +202,16 @@ export default function MainPage() {
             />
             <Tracks
                 tracks={
-                    tracks === null ? tracks :
-                    tracks.filter(track => { 
-                        
+                    tracksConverted === null ? tracksConverted :
+                    tracksConverted.filter(track => { 
                         return ( 
-                            ((track.name.toLowerCase() === searchText.toLowerCase()) 
-                            || (track.name.toLowerCase().includes(searchText.toLowerCase()))
-                            || (track.author.toLowerCase() === searchText.toLowerCase())
+                            ((track.name.toLowerCase().includes(searchText.toLowerCase()))
                             || (track.author.toLowerCase().includes(searchText.toLowerCase()))
-                            || (track.album.toLowerCase() === searchText.toLowerCase())
                             || (track.album.toLowerCase().includes(searchText.toLowerCase())))
                             && (filterAuthors.length === 0 ? true : filterAuthors.includes(track.author))  
                             && (filterYears.length === 0 ? true : filterYears.includes(track.relese ? track.release_date.slice(0, 4) : "Not stated")) 
                             && (filterGenries.length === 0 ? true : filterGenries.includes(track.genre))  
                         )
-
-                        // return (track.name.toLowerCase() === searchText.toLowerCase()) 
-                        // || (track.name.toLowerCase().includes(searchText.toLowerCase()))
-                        // || (track.author.toLowerCase() === searchText.toLowerCase())
-                        // || (track.author.toLowerCase().includes(searchText.toLowerCase()))
-                        // || (track.album.toLowerCase() === searchText.toLowerCase())
-                        // || (track.album.toLowerCase().includes(searchText.toLowerCase()))
                     })
                 }
                 setCurrentTrack={setCurrentTrackById}
