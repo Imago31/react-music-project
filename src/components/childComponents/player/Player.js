@@ -100,7 +100,7 @@ export default function Player(props) {
 
     const playNextTrack = () => {
         console.log('> playNextTrack')
-        console.log(JSON.stringify(currentTrack))
+        console.log(JSON.stringify(currentTrack)) // Somehow current tracks doesn't update ??
         if (currTrackHasAdjacent.right) props.setCurrentTrackByIdx(currentTrackIdx + 1)
         else if (isLoopEnabled) props.setCurrentTrackByIdx(0)
     }
