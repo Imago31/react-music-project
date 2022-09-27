@@ -20,7 +20,7 @@ function secondsToString(timeSec) {
     return `${mins}:${secs}`
 }
 
-const DEFAULT_VOLUME = 50
+const DEFAULT_VOLUME = 5
 
 export default function Player(props) {
     // Playing States
@@ -100,6 +100,7 @@ export default function Player(props) {
 
     const playNextTrack = () => {
         console.log('> playNextTrack')
+        console.log(JSON.stringify(currentTrack))
         if (currTrackHasAdjacent.right) props.setCurrentTrackByIdx(currentTrackIdx + 1)
         else if (isLoopEnabled) props.setCurrentTrackByIdx(0)
     }
@@ -108,14 +109,14 @@ export default function Player(props) {
         setCurrTrackFactLength(currentAudio.currentTime)
 
         // Something wrong with the states - delay = 1 change
-        // if (isTrackOver() && currTrackHasAdjacent.right) {
-        //     console.log('> Play next...')
-        //     currentAudio.pause()
-        //     playNextTrack()
-        // }
+        if (isTrackOver() && currTrackHasAdjacent.right) {
+            console.log('> Play next...')
+            currentAudio.pause()
+            playNextTrack()
+        }
 
-        // if (isTrackOver() && !currTrackHasAdjacent.right) {
-        if (isTrackOver()) {
+        if (isTrackOver() && !currTrackHasAdjacent.right) {
+        // if (isTrackOver()) {
             console.log('> Stop playing...')
             currentAudio.pause()
             setIsPlaying(false)

@@ -127,7 +127,7 @@ export default function MainPage() {
     }
 
     const setCurrentTrackByIdx = (trackIdx) => {
-        // console.log(`> Setting new track, idx=${trackIdx}`)
+        console.log(`> Setting new track, idx=${trackIdx}`)
         const currentTrack = tracksConverted[trackIdx]
         // console.log(`> Set current track to: ${tracks[trackIdx].id}`)
         setCurrentTrack(currentTrack)
