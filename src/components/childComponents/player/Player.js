@@ -20,7 +20,7 @@ function secondsToString(timeSec) {
     return `${mins}:${secs}`
 }
 
-const DEFAULT_VOLUME = 50
+const DEFAULT_VOLUME = 5
 
 export default function Player(props) {
     // Playing States
@@ -120,7 +120,8 @@ export default function Player(props) {
             setIsPlaying(false)
         }
     }
-    //
+
+    // Track update
     useEffect(() => {
         console.log(props.currentTrack)
         console.log(`Track Idx = ${props.currentTrackIdx}, Track Duration = ${props.currentTrack.duration_in_seconds}, TrackAdjacent = ${JSON.stringify(props.currTrackHasAdjacent)}`)
@@ -128,12 +129,21 @@ export default function Player(props) {
         setCurrentTrackIdx(props.currentTrackIdx)
         setCurrSongHasAdjacent(props.currTrackHasAdjacent)
         setIsPlaying(true)
-
+        
         currentAudio.setAttribute('src', props.currentTrack.track_file)
         currentAudio.load()
         currentAudio.play()
         currentAudio.addEventListener('timeupdate', handleTimeUpdate)
-    }, [props.currentTrack, props.currentTrackIdx])
+    }, [props.currentTrack])
+
+    useEffect(() => {
+        console.log(props.currentTrack)
+        console.log(`Track Idx = ${props.currentTrackIdx}, Track Duration = ${props.currentTrack.duration_in_seconds}, TrackAdjacent = ${JSON.stringify(props.currTrackHasAdjacent)}`)
+        setCurrentTrack(props.currentTrack)
+        setCurrentTrackIdx(props.currentTrackIdx)
+        setCurrSongHasAdjacent(props.currTrackHasAdjacent)
+        setIsPlaying(true)
+    }, [props.currentTrackIdx])
 
 
     return (
