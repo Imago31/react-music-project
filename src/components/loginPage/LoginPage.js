@@ -63,8 +63,8 @@ export default function LoginPage() {
                 <img className="logo_form" src={logo} alt="logo" />
                 <form className="login_form" action="">
                     <input onClick={inpClick} className="login_input login_input_login" type="text" placeholder="Логин" />
-                    <input onClick={inpClick} className="login_input login_input_password password_first" type="text" placeholder="Пароль" />
-                    <input onClick={inpClick} className="login_input login_input_password password_next" type="text" placeholder="Повторите пароль" />
+                    <input onClick={inpClick} className="login_input login_input_password password_first" type="password" placeholder="Пароль" />
+                    <input onClick={inpClick} className="login_input login_input_password password_next" type="password" placeholder="Повторите пароль" />
                     <div className="buttons_block">
                         <button onClick={sendLogin} className="login_button">Войти</button>
                         <button onClick={reg_first_func} className="reg_button reg_first">Зарегистрироваться</button>
